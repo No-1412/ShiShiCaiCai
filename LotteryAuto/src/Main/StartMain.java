@@ -1,0 +1,1621 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Main;
+
+import Auto.LotteryAuto_HHGJ;
+import Auto.LotteryAuto_WNSR;
+import Auto.PublicAuto;
+import ORG.GameConfig;
+import ORG.Helper;
+import RTPower.RTFile;
+import RTPower.RTHttp;
+import com.google.gson.Gson;
+import java.awt.Color;
+import java.awt.event.ItemEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+/**
+ *
+ * @author jerry
+ */
+public class StartMain extends PublicMain {
+
+    /**
+     * 配置类实例
+     */
+    public GameConfig game_config;
+
+    /**
+     * 自动实例
+     */
+    public PublicAuto Auto;
+
+    /**
+     * 保存下获取到的所有的规则的信息,
+     * <br>包括押注列表 规则列表 tag
+     */
+    public HashMap AllRuleInfos = new HashMap();
+
+    /**
+     * Creates new form StartMain
+     *
+     * @param UserName 传入配置文件用户名
+     */
+    public StartMain(String UserName) {
+
+        initComponents();
+
+        //配置界面显示和关闭监听
+        MainSetForm(UserName);
+
+        //配置助手使用的配置文件
+        Helper helper = new Helper();
+        helper.SetConf(UserName);
+        //加载自动类,根据不同的TAG加载不同的类
+        String web_tag = helper.GetConfKey("web_tag");
+        switch (web_tag) {
+            case "HHGJ":
+                Auto = new LotteryAuto_HHGJ(this);
+                break;
+            case "WNSR":
+                Auto = new LotteryAuto_WNSR(this);
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "网站类型不存在,请重新再选择界面重新选择");
+                this.dispose();
+                break;
+        }
+
+        //创建配置实例
+        game_config = new GameConfig(this, UserName);
+        GetRuleList();
+        //启动后立即读取所有配置到界面
+        game_config.LoadAllConfigToMain();
+
+        Auto.WebDoMain = info_use_domain.getText();//配置域名
+        //立即加载验证码
+        Auto.GetYanzhengma();
+
+        //启动默认选择 不自动下注
+        conf_auto_stop.setSelected(true);
+    }
+
+    /**
+     * 初始配置界面
+     *
+     * @param UserName
+     */
+    private void MainSetForm(String UserName) {
+        //监听关闭事件,关闭的时候,把打开的窗口hash 里去掉自己
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+
+                //关闭自动运行的实例
+                Auto.Close();
+                Auto = null;
+
+                //先保存全部的配置
+                game_config.SaveAllConfigToFile();
+
+                //关闭的时候消除选择页面的Main记录
+                ConfigSelectMain.AllMains.remove(UserName);
+                //关闭自己打开列表
+//                new ConfigSelectMain().setVisible(true);
+
+            }
+
+        });
+
+        //设置居中
+        this.setLocationRelativeTo(null);
+        //设置显示名称在title
+        this.setTitle(this.getTitle() + " - " + UserName);
+
+    }
+
+    /**
+     * 获取rule列表,并显示在面上
+     */
+    private void GetRuleList() {
+        //抓取API页面的rule列表
+        //开始监听Api页面
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String result = "";
+                boolean get_api_status = true;
+                while (get_api_status) {
+                    String api_url = "http://api.hqylcn.com/BoutApi/GetRuleList";
+                    RTHttp Http = new RTHttp(api_url);
+                    result = Http.Get();
+                    Http.close();
+
+                    //检查没有抓到内容,则休眠一秒重试,直到抓取到 内容
+                    if (result.equals("")) {
+                         Auto.MainMsg("没有获取api的rulelist 正则重试!.....",false);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(StartMain.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } else {
+                        get_api_status = false;
+                    }
+                }
+
+                 Auto.MainMsg("获取api的rule list 完毕",false);
+                Gson json = new Gson();
+                //记录进全局变量
+                AllRuleInfos = json.fromJson(result, HashMap.class);
+                Iterator it = AllRuleInfos.keySet().iterator();
+                while (it.hasNext()) {
+                    String Key = (String) it.next();
+                    conf_rule_list.addItem(Key);
+                }
+                //界面规则列表里选定 配置文件保存的规则tag
+                conf_rule_list.setSelectedItem(game_config.helper.GetConfKey("conf_rule_list"));
+            }
+        }).start();
+
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        conf_auto_group = new javax.swing.ButtonGroup();
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        panel_config = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        conf_start_button = new javax.swing.JButton();
+        conf_stop_button = new javax.swing.JButton();
+        conf_yanzhengma = new javax.swing.JTextField();
+        conf_user_name = new javax.swing.JTextField();
+        conf_user_pass = new javax.swing.JPasswordField();
+        conf_user_out_pass = new javax.swing.JPasswordField();
+        conf_yanzhengma_image = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        conf_win_limit = new javax.swing.JTextField();
+        conf_tixian_limit = new javax.swing.JTextField();
+        conf_api_bout_limit = new javax.swing.JTextField();
+        conf_loss_limit = new javax.swing.JTextField();
+        conf_buy_double = new javax.swing.JComboBox<>();
+        jLabel16 = new javax.swing.JLabel();
+        conf_auto_start = new javax.swing.JRadioButton();
+        conf_auto_stop = new javax.swing.JRadioButton();
+        jLabel28 = new javax.swing.JLabel();
+        jLabel29 = new javax.swing.JLabel();
+        jLabel30 = new javax.swing.JLabel();
+        jLabel31 = new javax.swing.JLabel();
+        conf_100_clear = new javax.swing.JCheckBox();
+        conf_edit_pass = new javax.swing.JLabel();
+        jLabel32 = new javax.swing.JLabel();
+        conf_limit_game_num = new javax.swing.JTextField();
+        conf_limit_edit_button = new javax.swing.JLabel();
+        jLabel33 = new javax.swing.JLabel();
+        conf_rule_list = new javax.swing.JComboBox<>();
+        panel_info = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        info_user_name = new javax.swing.JLabel();
+        info_email = new javax.swing.JLabel();
+        info_bank_number = new javax.swing.JLabel();
+        info_bank_info = new javax.swing.JLabel();
+        info_format_money = new javax.swing.JLabel();
+        info_loss_money = new javax.swing.JLabel();
+        info_user_log_money = new javax.swing.JLabel();
+        info_buy_double = new javax.swing.JLabel();
+        info_win_money = new javax.swing.JLabel();
+        info_user_now_money = new javax.swing.JLabel();
+        info_use_domain = new javax.swing.JLabel();
+        panel_msg = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        msg = new javax.swing.JList<>();
+        jLabel26 = new javax.swing.JLabel();
+        info_heart_jump = new javax.swing.JLabel();
+        panel_deal = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        deal = new javax.swing.JTable();
+        panel_line = new javax.swing.JPanel();
+        jLabel37 = new javax.swing.JLabel();
+        line_ball_5 = new javax.swing.JLabel();
+        line_ball_1 = new javax.swing.JLabel();
+        line_ball_3 = new javax.swing.JLabel();
+        line_ball_2 = new javax.swing.JLabel();
+        line_ball_4 = new javax.swing.JLabel();
+        jLabel48 = new javax.swing.JLabel();
+        line_next_number = new javax.swing.JLabel();
+        line_td_1 = new javax.swing.JButton();
+        line_td_4 = new javax.swing.JButton();
+        line_td_5 = new javax.swing.JButton();
+        line_td_2 = new javax.swing.JButton();
+        line_td_3 = new javax.swing.JButton();
+        jLabel27 = new javax.swing.JLabel();
+        line_next_status = new javax.swing.JLabel();
+        line_td1_bei = new javax.swing.JLabel();
+        line_td2_bei = new javax.swing.JLabel();
+        line_td3_bei = new javax.swing.JLabel();
+        line_td4_bei = new javax.swing.JLabel();
+        line_td5_bei = new javax.swing.JLabel();
+        jLabel39 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setBackground(java.awt.Color.darkGray);
+
+        panel_config.setBackground(java.awt.Color.gray);
+
+        jLabel2.setFont(new java.awt.Font("Lucida Grande", 0, 15)); // NOI18N
+        jLabel2.setForeground(java.awt.Color.white);
+        jLabel2.setText("配置面板conf");
+
+        jLabel1.setText("验证码:");
+
+        jLabel6.setText("用户名:");
+
+        jLabel7.setText("密码:");
+
+        jLabel8.setText("提现密码:");
+
+        conf_start_button.setBackground(java.awt.Color.gray);
+        conf_start_button.setForeground(new java.awt.Color(255, 255, 255));
+        conf_start_button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/button_red.png"))); // NOI18N
+        conf_start_button.setText("启动程序");
+        conf_start_button.setBorder(null);
+        conf_start_button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        conf_start_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conf_start_buttonActionPerformed(evt);
+            }
+        });
+
+        conf_stop_button.setBackground(java.awt.Color.gray);
+        conf_stop_button.setForeground(new java.awt.Color(255, 255, 255));
+        conf_stop_button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/button_black.png"))); // NOI18N
+        conf_stop_button.setText("停止程序");
+        conf_stop_button.setBorder(null);
+        conf_stop_button.setEnabled(false);
+        conf_stop_button.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        conf_stop_button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conf_stop_buttonActionPerformed(evt);
+            }
+        });
+
+        conf_yanzhengma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conf_yanzhengmaActionPerformed(evt);
+            }
+        });
+
+        conf_yanzhengma_image.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        conf_yanzhengma_image.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                conf_yanzhengma_imageMouseClicked(evt);
+            }
+        });
+
+        jLabel10.setFont(new java.awt.Font("Lucida Grande", 0, 15)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setText("运行配置-实时生效");
+
+        jLabel11.setText("输多少停:");
+
+        jLabel12.setText("赢多少停:");
+
+        jLabel13.setText("提现保留额:");
+
+        jLabel14.setText("API回合限额:");
+
+        jLabel15.setText("下注倍数:");
+
+        conf_win_limit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conf_win_limitActionPerformed(evt);
+            }
+        });
+
+        conf_tixian_limit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conf_tixian_limitActionPerformed(evt);
+            }
+        });
+
+        conf_api_bout_limit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conf_api_bout_limitActionPerformed(evt);
+            }
+        });
+
+        conf_loss_limit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conf_loss_limitActionPerformed(evt);
+            }
+        });
+
+        conf_buy_double.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "0.2", "0.5", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "20", "50", "100", "200", "500", "800", "1000", "2000" }));
+        conf_buy_double.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                conf_buy_doubleItemStateChanged(evt);
+            }
+        });
+        conf_buy_double.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conf_buy_doubleActionPerformed(evt);
+            }
+        });
+
+        jLabel16.setFont(new java.awt.Font("Lucida Grande", 0, 15)); // NOI18N
+        jLabel16.setForeground(java.awt.Color.white);
+        jLabel16.setText("自动下注状态-实时生效");
+
+        conf_auto_start.setBackground(java.awt.Color.gray);
+        conf_auto_group.add(conf_auto_start);
+        conf_auto_start.setForeground(new java.awt.Color(51, 255, 51));
+        conf_auto_start.setText("自动");
+        conf_auto_start.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                conf_auto_startItemStateChanged(evt);
+            }
+        });
+        conf_auto_start.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conf_auto_startActionPerformed(evt);
+            }
+        });
+
+        conf_auto_stop.setBackground(java.awt.Color.gray);
+        conf_auto_group.add(conf_auto_stop);
+        conf_auto_stop.setForeground(new java.awt.Color(204, 0, 51));
+        conf_auto_stop.setText("关闭");
+        conf_auto_stop.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                conf_auto_stopItemStateChanged(evt);
+            }
+        });
+        conf_auto_stop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conf_auto_stopActionPerformed(evt);
+            }
+        });
+
+        jLabel28.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/RE.png"))); // NOI18N
+        jLabel28.setToolTipText("立即刷新重新计算止盈金额,初始资金不变.");
+        jLabel28.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel28MouseClicked(evt);
+            }
+        });
+
+        jLabel29.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/RE.png"))); // NOI18N
+        jLabel29.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel29MouseClicked(evt);
+            }
+        });
+
+        jLabel30.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/out_money.png"))); // NOI18N
+        jLabel30.setToolTipText("手动立即提现超出保留部分的存款到银行!");
+        jLabel30.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel30MouseClicked(evt);
+            }
+        });
+
+        jLabel31.setText("百期检测:");
+
+        conf_100_clear.setBackground(java.awt.Color.gray);
+        conf_100_clear.setText("新回合赢停");
+        conf_100_clear.setToolTipText("在100期后,只要有新回合出现就停止进行赢停");
+        conf_100_clear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conf_100_clearActionPerformed(evt);
+            }
+        });
+
+        conf_edit_pass.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit.png"))); // NOI18N
+        conf_edit_pass.setToolTipText("修改用户密码!");
+        conf_edit_pass.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                conf_edit_passMouseClicked(evt);
+            }
+        });
+
+        jLabel32.setText("最小期数:");
+
+        conf_limit_game_num.setText("120");
+        conf_limit_game_num.setToolTipText("最小参与期数,超过后将逐个回收和关闭通道,每日开始会自动打开全部通道");
+
+        conf_limit_edit_button.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit.png"))); // NOI18N
+        conf_limit_edit_button.setToolTipText("快速设置为当前期数");
+        conf_limit_edit_button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                conf_limit_edit_buttonMouseClicked(evt);
+            }
+        });
+
+        jLabel33.setText("规则选择:");
+
+        conf_rule_list.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                conf_rule_listItemStateChanged(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panel_configLayout = new javax.swing.GroupLayout(panel_config);
+        panel_config.setLayout(panel_configLayout);
+        panel_configLayout.setHorizontalGroup(
+            panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_configLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(panel_configLayout.createSequentialGroup()
+                            .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel1)
+                                .addComponent(jLabel6)
+                                .addComponent(jLabel7)
+                                .addComponent(jLabel8)
+                                .addComponent(jLabel11)
+                                .addComponent(jLabel12)
+                                .addComponent(jLabel13)
+                                .addComponent(jLabel14)
+                                .addComponent(jLabel15))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(panel_configLayout.createSequentialGroup()
+                                    .addComponent(conf_loss_limit, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel29))
+                                .addGroup(panel_configLayout.createSequentialGroup()
+                                    .addComponent(conf_win_limit, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel28))
+                                .addGroup(panel_configLayout.createSequentialGroup()
+                                    .addComponent(conf_tixian_limit, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel30))
+                                .addComponent(conf_api_bout_limit, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(conf_buy_double, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_configLayout.createSequentialGroup()
+                                        .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(conf_user_out_pass, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                                            .addComponent(conf_user_pass, javax.swing.GroupLayout.Alignment.LEADING))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(conf_edit_pass))
+                                    .addComponent(conf_user_name, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel_configLayout.createSequentialGroup()
+                                        .addComponent(conf_yanzhengma, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(conf_yanzhengma_image, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                    .addGroup(panel_configLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel_configLayout.createSequentialGroup()
+                                .addGap(88, 88, 88)
+                                .addComponent(conf_auto_stop))
+                            .addComponent(conf_auto_start)))
+                    .addGroup(panel_configLayout.createSequentialGroup()
+                        .addComponent(conf_start_button)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(conf_stop_button))
+                    .addGroup(panel_configLayout.createSequentialGroup()
+                        .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel32)
+                            .addComponent(jLabel31)
+                            .addComponent(jLabel33))
+                        .addGap(26, 26, 26)
+                        .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel_configLayout.createSequentialGroup()
+                                .addComponent(conf_limit_game_num, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(conf_limit_edit_button))
+                            .addComponent(conf_100_clear)
+                            .addComponent(conf_rule_list, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(0, 8, Short.MAX_VALUE))
+        );
+        panel_configLayout.setVerticalGroup(
+            panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_configLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_configLayout.createSequentialGroup()
+                        .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(conf_yanzhengma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(conf_user_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(conf_yanzhengma_image, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_configLayout.createSequentialGroup()
+                        .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel7)
+                            .addComponent(conf_user_pass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel8)
+                            .addComponent(conf_user_out_pass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(conf_edit_pass))
+                .addGap(10, 10, 10)
+                .addComponent(jLabel10)
+                .addGap(10, 10, 10)
+                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_configLayout.createSequentialGroup()
+                        .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel11)
+                            .addComponent(conf_loss_limit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel12)
+                                .addComponent(conf_win_limit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel28)))
+                    .addComponent(jLabel29))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel13)
+                        .addComponent(conf_tixian_limit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel30))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(conf_api_bout_limit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
+                    .addComponent(conf_buy_double, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(conf_limit_edit_button)
+                    .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(conf_limit_game_num, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel32)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(conf_100_clear)
+                    .addComponent(jLabel31))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel33)
+                    .addComponent(conf_rule_list, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                .addComponent(jLabel16)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(conf_auto_start)
+                    .addComponent(conf_auto_stop))
+                .addGap(18, 18, 18)
+                .addGroup(panel_configLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(conf_stop_button)
+                    .addComponent(conf_start_button))
+                .addGap(16, 16, 16))
+        );
+
+        panel_configLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {conf_limit_edit_button, conf_limit_game_num});
+
+        panel_configLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {conf_edit_pass, conf_user_pass});
+
+        panel_configLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {conf_loss_limit, jLabel29});
+
+        panel_configLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {conf_win_limit, jLabel28});
+
+        panel_configLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {conf_tixian_limit, jLabel30});
+
+        panel_info.setBackground(java.awt.Color.darkGray);
+
+        jLabel3.setFont(new java.awt.Font("Lucida Grande", 0, 15)); // NOI18N
+        jLabel3.setForeground(java.awt.Color.gray);
+        jLabel3.setText("信息面板info");
+
+        jLabel9.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel9.setText("用户名:");
+
+        jLabel17.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel17.setText("邮箱:");
+
+        jLabel18.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel18.setText("银行账号:");
+
+        jLabel19.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel19.setText("开户行:");
+
+        jLabel20.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel20.setText("当前存款:");
+
+        jLabel21.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel21.setText("当前交易:");
+
+        jLabel22.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel22.setText("下注倍数:");
+
+        jLabel23.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel23.setText("今日初始资金:");
+
+        jLabel24.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel24.setText("输停金额:");
+
+        jLabel25.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel25.setText("赢停金额:");
+
+        info_user_name.setForeground(new java.awt.Color(255, 255, 255));
+        info_user_name.setText("--");
+
+        info_email.setForeground(new java.awt.Color(255, 255, 255));
+        info_email.setText("--");
+
+        info_bank_number.setForeground(new java.awt.Color(255, 255, 255));
+        info_bank_number.setText("--");
+
+        info_bank_info.setForeground(new java.awt.Color(255, 255, 255));
+        info_bank_info.setText("--");
+
+        info_format_money.setForeground(new java.awt.Color(255, 255, 0));
+        info_format_money.setText("0");
+        info_format_money.setToolTipText("双击快捷修改初始资金!");
+        info_format_money.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                info_format_moneyMouseClicked(evt);
+            }
+        });
+
+        info_loss_money.setForeground(new java.awt.Color(255, 255, 0));
+        info_loss_money.setText("0");
+
+        info_user_log_money.setForeground(java.awt.Color.red);
+        info_user_log_money.setText("0");
+
+        info_buy_double.setForeground(new java.awt.Color(255, 255, 0));
+        info_buy_double.setText("--");
+
+        info_win_money.setForeground(new java.awt.Color(255, 255, 0));
+        info_win_money.setText("0");
+
+        info_user_now_money.setForeground(java.awt.Color.red);
+        info_user_now_money.setText("0");
+
+        info_use_domain.setForeground(new java.awt.Color(255, 255, 255));
+        info_use_domain.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        info_use_domain.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit.png"))); // NOI18N
+        info_use_domain.setToolTipText("当前使用的域名");
+        info_use_domain.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        info_use_domain.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                info_use_domainMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panel_infoLayout = new javax.swing.GroupLayout(panel_info);
+        panel_info.setLayout(panel_infoLayout);
+        panel_infoLayout.setHorizontalGroup(
+            panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_infoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_infoLayout.createSequentialGroup()
+                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(info_bank_number, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+                            .addComponent(info_user_name, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(info_email, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(info_bank_info, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(panel_infoLayout.createSequentialGroup()
+                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(panel_infoLayout.createSequentialGroup()
+                                .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(26, 26, 26)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel_infoLayout.createSequentialGroup()
+                                .addComponent(info_user_now_money, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(22, 22, 22)
+                                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(info_loss_money, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(info_user_log_money, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(panel_infoLayout.createSequentialGroup()
+                                .addComponent(info_format_money, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(209, 209, 209)))
+                        .addGap(18, 18, 18)
+                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel_infoLayout.createSequentialGroup()
+                                .addComponent(info_win_money, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(21, 21, 21))
+                            .addComponent(info_buy_double, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(54, 54, 54))
+                    .addGroup(panel_infoLayout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(info_use_domain, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
+        );
+        panel_infoLayout.setVerticalGroup(
+            panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_infoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(info_use_domain))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel17)
+                    .addComponent(info_user_name)
+                    .addComponent(info_email))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18)
+                    .addComponent(jLabel19)
+                    .addComponent(info_bank_number)
+                    .addComponent(info_bank_info))
+                .addGap(18, 18, 18)
+                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20)
+                    .addComponent(jLabel21)
+                    .addComponent(jLabel22)
+                    .addComponent(info_user_log_money)
+                    .addComponent(info_buy_double)
+                    .addComponent(info_user_now_money))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel23)
+                    .addComponent(jLabel24)
+                    .addComponent(jLabel25)
+                    .addComponent(info_format_money)
+                    .addComponent(info_loss_money)
+                    .addComponent(info_win_money))
+                .addContainerGap(11, Short.MAX_VALUE))
+        );
+
+        panel_msg.setBackground(java.awt.Color.darkGray);
+
+        jLabel4.setFont(new java.awt.Font("Lucida Grande", 0, 15)); // NOI18N
+        jLabel4.setForeground(java.awt.Color.gray);
+        jLabel4.setText("消息面板msg");
+
+        msg.setModel(new DefaultListModel());
+        jScrollPane2.setViewportView(msg);
+
+        jLabel26.setForeground(java.awt.Color.green);
+        jLabel26.setText("值守心跳:");
+
+        info_heart_jump.setForeground(java.awt.Color.green);
+        info_heart_jump.setText("--");
+
+        javax.swing.GroupLayout panel_msgLayout = new javax.swing.GroupLayout(panel_msg);
+        panel_msg.setLayout(panel_msgLayout);
+        panel_msgLayout.setHorizontalGroup(
+            panel_msgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane2)
+            .addGroup(panel_msgLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel26)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(info_heart_jump, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(53, 53, 53))
+        );
+        panel_msgLayout.setVerticalGroup(
+            panel_msgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_msgLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addGroup(panel_msgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel26)
+                    .addComponent(info_heart_jump))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        panel_deal.setBackground(java.awt.Color.darkGray);
+
+        jLabel5.setFont(new java.awt.Font("Lucida Grande", 0, 15)); // NOI18N
+        jLabel5.setForeground(java.awt.Color.gray);
+        jLabel5.setText("交易面板deal");
+
+        deal.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "时间", "期号", "押注", "输赢", "状态"
+            }
+        ));
+        jScrollPane1.setViewportView(deal);
+
+        javax.swing.GroupLayout panel_dealLayout = new javax.swing.GroupLayout(panel_deal);
+        panel_deal.setLayout(panel_dealLayout);
+        panel_dealLayout.setHorizontalGroup(
+            panel_dealLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1)
+            .addGroup(panel_dealLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panel_dealLayout.setVerticalGroup(
+            panel_dealLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_dealLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+        );
+
+        panel_line.setBackground(java.awt.Color.darkGray);
+
+        jLabel37.setFont(new java.awt.Font("Lucida Grande", 0, 15)); // NOI18N
+        jLabel37.setForeground(java.awt.Color.gray);
+        jLabel37.setText("通道管理 line");
+
+        line_ball_5.setForeground(java.awt.Color.lightGray);
+        line_ball_5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ball_5.png"))); // NOI18N
+        line_ball_5.setText("--");
+
+        line_ball_1.setForeground(java.awt.Color.lightGray);
+        line_ball_1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ball_1.png"))); // NOI18N
+        line_ball_1.setText("--");
+
+        line_ball_3.setForeground(java.awt.Color.lightGray);
+        line_ball_3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ball_3.png"))); // NOI18N
+        line_ball_3.setText("--");
+
+        line_ball_2.setForeground(java.awt.Color.lightGray);
+        line_ball_2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ball_2.png"))); // NOI18N
+        line_ball_2.setText("--");
+
+        line_ball_4.setForeground(java.awt.Color.lightGray);
+        line_ball_4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/ball_4.png"))); // NOI18N
+        line_ball_4.setText("--");
+
+        jLabel48.setForeground(java.awt.Color.lightGray);
+        jLabel48.setText("下期预测:");
+
+        line_next_number.setForeground(new java.awt.Color(255, 255, 255));
+        line_next_number.setText("--");
+
+        line_td_1.setBackground(new Color(233,233,233,0));
+        line_td_1.setForeground(new java.awt.Color(255, 255, 255));
+        line_td_1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/close.png"))); // NOI18N
+        line_td_1.setText("通道1");
+        line_td_1.setActionCommand("1");
+        line_td_1.setBorder(null);
+        line_td_1.setBorderPainted(false);
+        line_td_1.setSelected(true);
+        line_td_1.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.png"))); // NOI18N
+        line_td_1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                line_td_1ActionPerformed(evt);
+            }
+        });
+
+        line_td_4.setBackground(new Color(233,233,233,0));
+        line_td_4.setForeground(new java.awt.Color(255, 255, 255));
+        line_td_4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/close.png"))); // NOI18N
+        line_td_4.setText("通道4");
+        line_td_4.setActionCommand("4");
+        line_td_4.setBorder(null);
+        line_td_4.setBorderPainted(false);
+        line_td_4.setSelected(true);
+        line_td_4.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.png"))); // NOI18N
+        line_td_4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                line_td_4ActionPerformed(evt);
+            }
+        });
+
+        line_td_5.setBackground(new Color(233,233,233,0));
+        line_td_5.setForeground(new java.awt.Color(255, 255, 255));
+        line_td_5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/close.png"))); // NOI18N
+        line_td_5.setText("通道5");
+        line_td_5.setActionCommand("5");
+        line_td_5.setBorder(null);
+        line_td_5.setBorderPainted(false);
+        line_td_5.setSelected(true);
+        line_td_5.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.png"))); // NOI18N
+        line_td_5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                line_td_5ActionPerformed(evt);
+            }
+        });
+
+        line_td_2.setBackground(new Color(233,233,233,0));
+        line_td_2.setForeground(new java.awt.Color(255, 255, 255));
+        line_td_2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/close.png"))); // NOI18N
+        line_td_2.setText("通道2");
+        line_td_2.setActionCommand("2");
+        line_td_2.setBorder(null);
+        line_td_2.setBorderPainted(false);
+        line_td_2.setSelected(true);
+        line_td_2.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.png"))); // NOI18N
+        line_td_2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                line_td_2ActionPerformed(evt);
+            }
+        });
+
+        line_td_3.setBackground(new Color(233,233,233,0));
+        line_td_3.setForeground(new java.awt.Color(255, 255, 255));
+        line_td_3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/close.png"))); // NOI18N
+        line_td_3.setText("通道3");
+        line_td_3.setActionCommand("3");
+        line_td_3.setBorder(null);
+        line_td_3.setBorderPainted(false);
+        line_td_3.setSelected(true);
+        line_td_3.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/images/open.png"))); // NOI18N
+        line_td_3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                line_td_3ActionPerformed(evt);
+            }
+        });
+
+        jLabel27.setForeground(java.awt.Color.lightGray);
+        jLabel27.setText("下注状态:");
+
+        line_next_status.setForeground(java.awt.Color.yellow);
+        line_next_status.setText("wait");
+
+        line_td1_bei.setForeground(new java.awt.Color(255, 51, 51));
+        line_td1_bei.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        line_td1_bei.setText("1");
+        line_td1_bei.setToolTipText("1");
+        line_td1_bei.setBorder(new javax.swing.border.LineBorder(java.awt.Color.gray, 1, true));
+        line_td1_bei.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                line_td1_beiMouseClicked(evt);
+            }
+        });
+
+        line_td2_bei.setForeground(new java.awt.Color(255, 51, 51));
+        line_td2_bei.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        line_td2_bei.setText("1");
+        line_td2_bei.setToolTipText("2");
+        line_td2_bei.setBorder(new javax.swing.border.LineBorder(java.awt.Color.gray, 1, true));
+        line_td2_bei.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                line_td2_beiMouseClicked(evt);
+            }
+        });
+
+        line_td3_bei.setForeground(new java.awt.Color(255, 51, 51));
+        line_td3_bei.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        line_td3_bei.setText("1");
+        line_td3_bei.setToolTipText("3");
+        line_td3_bei.setBorder(new javax.swing.border.LineBorder(java.awt.Color.gray, 1, true));
+        line_td3_bei.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                line_td3_beiMouseClicked(evt);
+            }
+        });
+
+        line_td4_bei.setForeground(new java.awt.Color(255, 51, 51));
+        line_td4_bei.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        line_td4_bei.setText("1");
+        line_td4_bei.setToolTipText("4");
+        line_td4_bei.setBorder(new javax.swing.border.LineBorder(java.awt.Color.gray, 1, true));
+        line_td4_bei.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                line_td4_beiMouseClicked(evt);
+            }
+        });
+
+        line_td5_bei.setForeground(new java.awt.Color(255, 51, 51));
+        line_td5_bei.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        line_td5_bei.setText("1");
+        line_td5_bei.setToolTipText("5");
+        line_td5_bei.setBorder(new javax.swing.border.LineBorder(java.awt.Color.gray, 1, true));
+        line_td5_bei.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                line_td5_beiMouseClicked(evt);
+            }
+        });
+
+        jLabel39.setForeground(java.awt.Color.lightGray);
+        jLabel39.setText("通道倍数:");
+
+        javax.swing.GroupLayout panel_lineLayout = new javax.swing.GroupLayout(panel_line);
+        panel_line.setLayout(panel_lineLayout);
+        panel_lineLayout.setHorizontalGroup(
+            panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_lineLayout.createSequentialGroup()
+                .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_lineLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel37))
+                    .addGroup(panel_lineLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel_lineLayout.createSequentialGroup()
+                                .addComponent(jLabel48)
+                                .addGap(18, 18, 18)
+                                .addComponent(line_next_number, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(panel_lineLayout.createSequentialGroup()
+                                .addComponent(jLabel27)
+                                .addGap(18, 18, 18)
+                                .addComponent(line_next_status, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel39))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_lineLayout.createSequentialGroup()
+                                .addComponent(line_td_1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)
+                                .addComponent(line_td_2, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)
+                                .addComponent(line_td_3, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)
+                                .addComponent(line_td_4, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, 0)
+                                .addComponent(line_td_5, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_lineLayout.createSequentialGroup()
+                                .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(line_ball_1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(line_td1_bei))
+                                .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(line_ball_2, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(line_td2_bei))
+                                .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(line_ball_3, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(line_td3_bei))
+                                .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(line_ball_4, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(line_td4_bei))
+                                .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(line_td5_bei)
+                                    .addComponent(line_ball_5, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addContainerGap())
+        );
+
+        panel_lineLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {line_ball_1, line_ball_2, line_ball_3, line_ball_4, line_ball_5, line_td1_bei, line_td2_bei, line_td3_bei, line_td4_bei, line_td5_bei});
+
+        panel_lineLayout.setVerticalGroup(
+            panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_lineLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel37)
+                .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(line_td_1)
+                        .addComponent(line_td_4)
+                        .addComponent(line_td_3)
+                        .addComponent(line_td_5)
+                        .addComponent(line_td_2))
+                    .addGroup(panel_lineLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel27)
+                            .addComponent(line_next_status))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(line_ball_5)
+                    .addComponent(line_ball_4)
+                    .addComponent(line_ball_3)
+                    .addComponent(line_ball_1)
+                    .addComponent(jLabel48)
+                    .addComponent(line_next_number)
+                    .addComponent(line_ball_2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_lineLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(line_td1_bei)
+                    .addComponent(line_td2_bei)
+                    .addComponent(line_td3_bei)
+                    .addComponent(line_td4_bei)
+                    .addComponent(line_td5_bei)
+                    .addComponent(jLabel39))
+                .addContainerGap(9, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panel_deal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panel_info, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panel_msg, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panel_line, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, 0)
+                .addComponent(panel_config, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panel_config, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(panel_info, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(panel_line, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(panel_msg, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(panel_deal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void conf_yanzhengmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conf_yanzhengmaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_conf_yanzhengmaActionPerformed
+
+    private void conf_win_limitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conf_win_limitActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_conf_win_limitActionPerformed
+
+    private void conf_tixian_limitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conf_tixian_limitActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_conf_tixian_limitActionPerformed
+
+    private void conf_api_bout_limitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conf_api_bout_limitActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_conf_api_bout_limitActionPerformed
+
+    private void conf_loss_limitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conf_loss_limitActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_conf_loss_limitActionPerformed
+
+    private void conf_auto_startActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conf_auto_startActionPerformed
+
+    }//GEN-LAST:event_conf_auto_startActionPerformed
+
+    /**
+     *  开始运行程序的启动按钮
+     *
+     * @param evt
+     */
+    private void conf_start_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conf_start_buttonActionPerformed
+        //运行启动自动
+        Auto.Start();
+    }//GEN-LAST:event_conf_start_buttonActionPerformed
+
+    /**
+     * 验证码图片刷新
+     *
+     * @param evt
+     */
+    private void conf_yanzhengma_imageMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_conf_yanzhengma_imageMouseClicked
+        Auto.GetYanzhengma();
+    }//GEN-LAST:event_conf_yanzhengma_imageMouseClicked
+
+    /**
+     * 停止程序按钮
+     *
+     * @param evt
+     */
+    private void conf_stop_buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conf_stop_buttonActionPerformed
+        Auto.Stop();
+
+    }//GEN-LAST:event_conf_stop_buttonActionPerformed
+
+    private void line_td_2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_line_td_2ActionPerformed
+        Auto.SettingFiveTdBuyStatus(2);
+    }//GEN-LAST:event_line_td_2ActionPerformed
+
+    /**
+     * 监听倍数下拉事件
+     *
+     * @param evt
+     */
+    private void conf_buy_doubleItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_conf_buy_doubleItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+
+            //选中后,刷新界面的期号,这样可以导致重新显示 5通道下注额
+            line_next_number.setText("--");
+            RTFile.d_out("下注倍数设置为:" + evt.getItem().toString() + ",期号初始为--,激活5通道重新显示下注额");
+            Auto.MainMsg("下注倍数设置为:" + evt.getItem().toString() + ",预计下注金额会跟随倍数变动", false);
+            FormatLineTdBei(evt.getItem().toString());
+        }
+    }//GEN-LAST:event_conf_buy_doubleItemStateChanged
+
+    /**
+     * 刷新所有通道的下注倍数为 全局的下注倍数
+     *
+     * @param beiString
+     */
+    public void FormatLineTdBei(String beiString) {
+        //同时改变5个通道的倍数
+        line_td1_bei.setText(beiString);
+        line_td2_bei.setText(beiString);
+        line_td3_bei.setText(beiString);
+        line_td4_bei.setText(beiString);
+        line_td5_bei.setText(beiString);
+
+        line_td1_bei.setForeground(Color.red);
+        line_td2_bei.setForeground(Color.red);
+        line_td3_bei.setForeground(Color.red);
+        line_td4_bei.setForeground(Color.red);
+        line_td5_bei.setForeground(Color.red);
+
+    }
+
+    /**
+     * 通道点击,状态改变按钮事件
+     *
+     * @param evt
+     */
+    private void line_td_1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_line_td_1ActionPerformed
+        Auto.SettingFiveTdBuyStatus(1);
+    }//GEN-LAST:event_line_td_1ActionPerformed
+
+    private void line_td_3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_line_td_3ActionPerformed
+        Auto.SettingFiveTdBuyStatus(3);
+    }//GEN-LAST:event_line_td_3ActionPerformed
+
+    private void line_td_4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_line_td_4ActionPerformed
+        Auto.SettingFiveTdBuyStatus(4);
+    }//GEN-LAST:event_line_td_4ActionPerformed
+
+    private void line_td_5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_line_td_5ActionPerformed
+        Auto.SettingFiveTdBuyStatus(5);
+    }//GEN-LAST:event_line_td_5ActionPerformed
+
+    /**
+     * 手动提现按钮点击事件
+     *
+     * @param evt
+     */
+    private void jLabel30MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel30MouseClicked
+        //非运行状态不能激活
+        if (!Auto.AutoStatus) {
+            JOptionPane.showMessageDialog(null, "请在运行的情况下操作手动提现.");
+            return;
+        }
+        Auto.AutoTixian();
+    }//GEN-LAST:event_jLabel30MouseClicked
+
+    /**
+     * 刷新止盈金额的按钮
+     *
+     * @param evt
+     */
+    private void jLabel28MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel28MouseClicked
+        //非运行状态不能激活
+        if (!Auto.AutoStatus) {
+            JOptionPane.showMessageDialog(null, "请在运行的情况下操作刷新止盈金额.");
+            return;
+        }
+        double format_money = Auto.Conf("info_format_money").GetDouble();
+        double win_money_limit = Auto.Conf("conf_win_limit").GetDouble();
+
+        info_win_money.setText("" + (format_money + win_money_limit));
+        Auto.MainMsg("止盈额度被重置为:" + win_money_limit + "元,新的止盈上限为:" + (format_money + win_money_limit) + "元", true);
+        JOptionPane.showMessageDialog(null, "止盈金额刷新完毕,请检查一次.");
+    }//GEN-LAST:event_jLabel28MouseClicked
+
+    private void jLabel29MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel29MouseClicked
+        //非运行状态不能激活
+        if (!Auto.AutoStatus) {
+            JOptionPane.showMessageDialog(null, "请在运行的情况下操作刷新止损金额.");
+            return;
+        }
+        double format_money = Auto.Conf("info_format_money").GetDouble();
+        double loss_money_limit = Auto.Conf("conf_loss_limit").GetDouble();
+
+        info_loss_money.setText("" + (format_money - loss_money_limit));
+        Auto.MainMsg("止损额度被重置为:" + loss_money_limit + "元,新的止损下限为:" + (format_money + loss_money_limit) + "元", true);
+        JOptionPane.showMessageDialog(null, "止损金额刷新完毕,请检查一次.");
+    }//GEN-LAST:event_jLabel29MouseClicked
+
+    /**
+     * 100回合检测开关
+     *
+     * @param evt
+     */
+    private void conf_100_clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conf_100_clearActionPerformed
+        boolean select = conf_100_clear.isSelected();
+        if (select) {
+            Auto.MainMsg("100期后新回合赢停设置[开启]", true);
+        } else {
+            Auto.MainMsg("100期后新回合赢停设置[关闭]", true);
+        }
+    }//GEN-LAST:event_conf_100_clearActionPerformed
+
+    /**
+     * 修改密码按钮事件,激活新窗体
+     *
+     * @param evt
+     */
+    private void conf_edit_passMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_conf_edit_passMouseClicked
+        if (!Auto.AutoStatus) {
+            JOptionPane.showMessageDialog(null, "请在运行的情况下操作修改密码.");
+            return;
+        }
+        EditPass editmain = new EditPass(this);
+        editmain.setVisible(true);
+    }//GEN-LAST:event_conf_edit_passMouseClicked
+
+    /**
+     * 快捷设置最小期数为当前期数的按钮事件
+     *
+     * @param evt
+     */
+    private void conf_limit_edit_buttonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_conf_limit_edit_buttonMouseClicked
+        //点击后读取当前期数,并填入输入框
+        if (!Auto.AutoStatus) {
+            JOptionPane.showMessageDialog(null, "请在运行的情况下操作设置.");
+            return;
+        }
+        if (line_next_number.getText().equals("--")) {
+            return;
+        }
+        String now_number_string = line_next_number.getText().split("-")[1];
+        int now_number = Integer.parseInt(now_number_string);
+        conf_limit_game_num.setText("" + now_number);
+    }//GEN-LAST:event_conf_limit_edit_buttonMouseClicked
+
+    /**
+     * 双击初始资金的label 事件
+     * <br>双击后出现输入框,填写修改初始资金
+     *
+     * @param evt
+     */
+    private void info_format_moneyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_info_format_moneyMouseClicked
+        String inputValue = JOptionPane.showInputDialog("请输入新的初始资金数量!");
+        info_format_money.setText(inputValue);
+    }//GEN-LAST:event_info_format_moneyMouseClicked
+
+    /**
+     * 域名配置按钮事件
+     *
+     * @param evt
+     */
+    private void info_use_domainMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_info_use_domainMouseClicked
+
+        new DomainListMain(this).setVisible(true);
+    }//GEN-LAST:event_info_use_domainMouseClicked
+
+    private void conf_buy_doubleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conf_buy_doubleActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_conf_buy_doubleActionPerformed
+
+    private void line_td1_beiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_line_td1_beiMouseClicked
+        NewMainSettingTdBei(line_td1_bei);
+    }//GEN-LAST:event_line_td1_beiMouseClicked
+
+    private void line_td2_beiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_line_td2_beiMouseClicked
+        NewMainSettingTdBei(line_td2_bei);
+    }//GEN-LAST:event_line_td2_beiMouseClicked
+
+    private void line_td3_beiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_line_td3_beiMouseClicked
+        NewMainSettingTdBei(line_td3_bei);
+    }//GEN-LAST:event_line_td3_beiMouseClicked
+
+    private void line_td4_beiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_line_td4_beiMouseClicked
+        NewMainSettingTdBei(line_td4_bei);
+    }//GEN-LAST:event_line_td4_beiMouseClicked
+
+    private void line_td5_beiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_line_td5_beiMouseClicked
+        NewMainSettingTdBei(line_td5_bei);
+    }//GEN-LAST:event_line_td5_beiMouseClicked
+
+    private void conf_auto_stopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conf_auto_stopActionPerformed
+
+    }//GEN-LAST:event_conf_auto_stopActionPerformed
+
+    private void conf_auto_stopItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_conf_auto_stopItemStateChanged
+        boolean status_stop_selected = conf_auto_stop.isSelected();
+        if (status_stop_selected) {
+            panel_line.setBackground(new Color(140, 64, 64, 255));
+        }
+    }//GEN-LAST:event_conf_auto_stopItemStateChanged
+
+    private void conf_auto_startItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_conf_auto_startItemStateChanged
+        boolean status_start_selected = conf_auto_start.isSelected();
+        if (status_start_selected) {
+            panel_line.setBackground(Color.DARK_GRAY);
+        }
+    }//GEN-LAST:event_conf_auto_startItemStateChanged
+
+    private void conf_rule_listItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_conf_rule_listItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            //选中后,刷新界面的期号,这样可以导致重新显示 5通道下注额
+            if (conf_rule_list.getItemCount() <= 1) {
+                return;
+            }
+
+            line_next_number.setText("--");
+            RTFile.d_out("规则切换:" + evt.getItem().toString() + ",期号初始为--,激活5通道重新显示下注额");
+            Auto.MainMsg("规则切换:" + evt.getItem().toString() + ",预计下注金额会跟随倍数变动", false);
+
+        }
+    }//GEN-LAST:event_conf_rule_listItemStateChanged
+
+    private void NewMainSettingTdBei(JLabel use_label) {
+        TdBuyBeiSettingMain TdBuyBeiMain = new TdBuyBeiSettingMain(this);
+        TdBuyBeiMain.SettingUseLabel(use_label);
+        TdBuyBeiMain.setVisible(true);
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ConfigSelectMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+//
+
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new StartMain().setVisible(true);
+//            }
+//        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JCheckBox conf_100_clear;
+    public javax.swing.JTextField conf_api_bout_limit;
+    public javax.swing.ButtonGroup conf_auto_group;
+    public javax.swing.JRadioButton conf_auto_start;
+    public javax.swing.JRadioButton conf_auto_stop;
+    public javax.swing.JComboBox<String> conf_buy_double;
+    private javax.swing.JLabel conf_edit_pass;
+    private javax.swing.JLabel conf_limit_edit_button;
+    public javax.swing.JTextField conf_limit_game_num;
+    public javax.swing.JTextField conf_loss_limit;
+    public javax.swing.JComboBox<String> conf_rule_list;
+    public javax.swing.JButton conf_start_button;
+    public javax.swing.JButton conf_stop_button;
+    public javax.swing.JTextField conf_tixian_limit;
+    public javax.swing.JTextField conf_user_name;
+    public javax.swing.JPasswordField conf_user_out_pass;
+    public javax.swing.JPasswordField conf_user_pass;
+    public javax.swing.JTextField conf_win_limit;
+    public javax.swing.JTextField conf_yanzhengma;
+    public javax.swing.JLabel conf_yanzhengma_image;
+    public javax.swing.JTable deal;
+    public javax.swing.JLabel info_bank_info;
+    public javax.swing.JLabel info_bank_number;
+    public javax.swing.JLabel info_buy_double;
+    public javax.swing.JLabel info_email;
+    public javax.swing.JLabel info_format_money;
+    public javax.swing.JLabel info_heart_jump;
+    public javax.swing.JLabel info_loss_money;
+    public javax.swing.JLabel info_use_domain;
+    public javax.swing.JLabel info_user_log_money;
+    public javax.swing.JLabel info_user_name;
+    public javax.swing.JLabel info_user_now_money;
+    public javax.swing.JLabel info_win_money;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
+    private javax.swing.JLabel jLabel37;
+    private javax.swing.JLabel jLabel39;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel48;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPopupMenu jPopupMenu1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    public javax.swing.JLabel line_ball_1;
+    public javax.swing.JLabel line_ball_2;
+    public javax.swing.JLabel line_ball_3;
+    public javax.swing.JLabel line_ball_4;
+    public javax.swing.JLabel line_ball_5;
+    public javax.swing.JLabel line_next_number;
+    public javax.swing.JLabel line_next_status;
+    public javax.swing.JLabel line_td1_bei;
+    public javax.swing.JLabel line_td2_bei;
+    public javax.swing.JLabel line_td3_bei;
+    public javax.swing.JLabel line_td4_bei;
+    public javax.swing.JLabel line_td5_bei;
+    public javax.swing.JButton line_td_1;
+    public javax.swing.JButton line_td_2;
+    public javax.swing.JButton line_td_3;
+    public javax.swing.JButton line_td_4;
+    public javax.swing.JButton line_td_5;
+    public javax.swing.JList<String> msg;
+    private javax.swing.JPanel panel_config;
+    private javax.swing.JPanel panel_deal;
+    private javax.swing.JPanel panel_info;
+    private javax.swing.JPanel panel_line;
+    private javax.swing.JPanel panel_msg;
+    // End of variables declaration//GEN-END:variables
+}

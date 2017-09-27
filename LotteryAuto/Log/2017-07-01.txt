@@ -1,0 +1,104 @@
+2017-07-01 15:59:02       提现结果:'密码错误！'
+2017-07-01 16:00:32       提现结果:'密码错误！'
+2017-07-01 17:00:44       提现结果:'密码错误！'
+2017-07-01 17:01:17       建立实际链接失败:connect timed out
+connect timed out	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at sun.net.NetworkClient.doConnect(NetworkClient.java:175)
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:432)
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:527)
+	at sun.net.www.http.HttpClient.<init>(HttpClient.java:211)
+	at sun.net.www.http.HttpClient.New(HttpClient.java:308)
+	at sun.net.www.http.HttpClient.New(HttpClient.java:326)
+	at sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1169)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1105)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:999)
+	at sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:933)
+	at RTPower.RTHttp.Get(RTHttp.java:101)
+	at Auto.LotteryAuto.GetApiInfo(LotteryAuto.java:137)
+	at Auto.PublicAuto.lambda$Start$0(PublicAuto.java:122)
+	at java.lang.Thread.run(Thread.java:745)
+
+2017-07-01 17:01:48       建立实际链接失败:connect timed out
+connect timed out	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at sun.net.NetworkClient.doConnect(NetworkClient.java:175)
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:432)
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:527)
+	at sun.net.www.http.HttpClient.<init>(HttpClient.java:211)
+	at sun.net.www.http.HttpClient.New(HttpClient.java:308)
+	at sun.net.www.http.HttpClient.New(HttpClient.java:326)
+	at sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1169)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1105)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:999)
+	at sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:933)
+	at RTPower.RTHttp.Get(RTHttp.java:101)
+	at Auto.LotteryAuto.GetApiInfo(LotteryAuto.java:137)
+	at Auto.PublicAuto.lambda$Start$0(PublicAuto.java:122)
+	at java.lang.Thread.run(Thread.java:745)
+
+2017-07-01 17:05:16       提现结果:'密码错误！'
+2017-07-01 18:25:40       下注错误:【Not enough balance】
+2017-07-01 18:27:57       下注错误:【Not enough balance】
+2017-07-01 18:29:26       下注错误:【该期数已关闭,无法进行下注】
+2017-07-01 18:35:34       下注错误:【余额不足】
+2017-07-01 18:45:38       下注错误:game=CQSC&game_num=20170701-077&orders[1:ODD]={"gold":20,"odds":"1.97"}
+2017-07-01 18:49:32       下注错误:game=CQSC&game_num=20170701-077&orders[1:ODD]={"gold":20,"odds":"1.97"}
+2017-07-01 18:55:39       下注错误:<?xml version="1.0" encoding="utf-8"?><xml><msg>【余额不足】</msg><result/></xml>
+2017-07-01 19:15:39       下注错误:<?xml version="1.0" encoding="utf-8"?><xml><msg>【该期数已关闭,无法进行下注】</msg><result/></xml>
+2017-07-01 19:25:41       下注错误:<?xml version="1.0" encoding="utf-8"?><xml><msg>【该期数已关闭,无法进行下注】</msg><result/></xml>
+2017-07-01 19:31:53       建立实际链接失败:Network is down
+Network is down	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at sun.net.NetworkClient.doConnect(NetworkClient.java:175)
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:432)
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:527)
+	at sun.net.www.http.HttpClient.<init>(HttpClient.java:211)
+	at sun.net.www.http.HttpClient.New(HttpClient.java:308)
+	at sun.net.www.http.HttpClient.New(HttpClient.java:326)
+	at sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1169)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1105)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:999)
+	at sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:933)
+	at RTPower.RTHttp.Get(RTHttp.java:101)
+	at Auto.LotteryAuto.GetUserData(LotteryAuto.java:479)
+	at Auto.LotteryAuto.KeepHeartJump(LotteryAuto.java:291)
+	at Auto.PublicAuto.lambda$Start$0(PublicAuto.java:117)
+	at java.lang.Thread.run(Thread.java:745)
+
+2017-07-01 19:32:03       建立实际链接失败:Network is unreachable
+Network is unreachable	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at sun.net.NetworkClient.doConnect(NetworkClient.java:175)
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:432)
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:527)
+	at sun.net.www.http.HttpClient.<init>(HttpClient.java:211)
+	at sun.net.www.http.HttpClient.New(HttpClient.java:308)
+	at sun.net.www.http.HttpClient.New(HttpClient.java:326)
+	at sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1169)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1105)
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:999)
+	at sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:933)
+	at RTPower.RTHttp.Get(RTHttp.java:101)
+	at Auto.LotteryAuto.GetUserData(LotteryAuto.java:479)
+	at Auto.LotteryAuto.KeepHeartJump(LotteryAuto.java:291)
+	at Auto.PublicAuto.lambda$Start$0(PublicAuto.java:117)
+	at java.lang.Thread.run(Thread.java:745)
+
+2017-07-01 19:45:41       下注错误:<?xml version="1.0" encoding="utf-8"?><xml><msg>&lt;h3&gt;重庆时时彩&lt;/h3&gt;&lt;span class="order-id"&gt;单号: 3256877392&lt;/span&gt;&lt;br&gt;号码: &lt;span class="choose_name"&gt;万 单&lt;/span&gt;&lt;wbr&gt;&lt;span class="odds-box"&gt; @ &lt;span class="odds"&gt;1.97&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class="gold"&gt;下注金额: 5&lt;/span&gt;&lt;br&gt;&lt;span class="validation-code"&gt;0D69FFFAC654F82&lt;/span&gt;</msg><result>1</result><odds_change/><remain_balance>1.11</remain_balance></xml>

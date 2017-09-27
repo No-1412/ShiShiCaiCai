@@ -1,0 +1,16 @@
+2017-08-26 10:08:11       建立实际链接失败:handshake alert:  unrecognized_name
+handshake alert:  unrecognized_name	at sun.security.ssl.ClientHandshaker.handshakeAlert(ClientHandshaker.java:1441)
+	at sun.security.ssl.SSLSocketImpl.recvAlert(SSLSocketImpl.java:2016)
+	at sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1125)
+	at sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1375)
+	at sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1403)
+	at sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1387)
+	at sun.net.www.protocol.https.HttpsClient.afterConnect(HttpsClient.java:559)
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:185)
+	at sun.net.www.protocol.https.HttpsURLConnectionImpl.connect(HttpsURLConnectionImpl.java:153)
+	at RTPower.RTHttp.Get(RTHttp.java:105)
+	at Auto.LotteryAuto_WNSR.GetYanzhengma(LotteryAuto_WNSR.java:108)
+	at Main.StartMain.<init>(StartMain.java:88)
+	at lotteryauto.panel.SelectPanelManage$1.run(SelectPanelManage.java:139)
+	at java.lang.Thread.run(Thread.java:745)
+

@@ -1,0 +1,34 @@
+2017-06-28 13:07:50       java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $	at com.google.gson.Gson.fromJson(Gson.java:817)
+	at com.google.gson.Gson.fromJson(Gson.java:770)
+	at com.google.gson.Gson.fromJson(Gson.java:719)
+	at com.google.gson.Gson.fromJson(Gson.java:691)
+	at lotteryauto.Main.main(Main.java:28)
+
+2017-06-28 13:11:43       
+java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $	at com.google.gson.Gson.fromJson(Gson.java:817)
+	at com.google.gson.Gson.fromJson(Gson.java:770)
+	at com.google.gson.Gson.fromJson(Gson.java:719)
+	at com.google.gson.Gson.fromJson(Gson.java:691)
+	at lotteryauto.Main.main(Main.java:28)
+
+2017-06-28 13:12:06       ssss
+java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $	at com.google.gson.Gson.fromJson(Gson.java:817)
+	at com.google.gson.Gson.fromJson(Gson.java:770)
+	at com.google.gson.Gson.fromJson(Gson.java:719)
+	at com.google.gson.Gson.fromJson(Gson.java:691)
+	at lotteryauto.Main.main(Main.java:28)
+
+2017-06-28 13:13:10       ssss
+java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $	at com.google.gson.Gson.fromJson(Gson.java:817)
+	at com.google.gson.Gson.fromJson(Gson.java:770)
+	at com.google.gson.Gson.fromJson(Gson.java:719)
+	at com.google.gson.Gson.fromJson(Gson.java:691)
+	at lotteryauto.Main.main(Main.java:28)
+
+2017-06-28 13:34:57       ssss
+java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $	at com.google.gson.Gson.fromJson(Gson.java:817)
+	at com.google.gson.Gson.fromJson(Gson.java:770)
+	at com.google.gson.Gson.fromJson(Gson.java:719)
+	at com.google.gson.Gson.fromJson(Gson.java:691)
+	at lotteryauto.Main.main(Main.java:26)
+

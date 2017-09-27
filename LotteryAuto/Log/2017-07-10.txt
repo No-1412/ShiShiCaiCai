@@ -1,0 +1,26 @@
+2017-07-10 15:41:22       刷新lt 页面的 phpsession 成功!
+2017-07-10 15:41:23       提示:新一天,重计止损额.止损:-100.0元,止盈:100.0元,初始:0.0元.
+2017-07-10 16:25:48       刷新lt 页面的 phpsession 成功!
+2017-07-10 16:25:49       提示:新一天,重计止损额.止损:-100.0元,止盈:100.0元,初始:0.0元.
+2017-07-10 16:27:10       刷新lt 页面的 phpsession 成功!
+2017-07-10 16:27:12       提示:新一天,重计止损额.止损:-100.0元,止盈:100.0元,初始:0.0元.
+2017-07-10 16:27:54       系统线程运行结束
+2017-07-10 16:29:32       刷新lt 页面的 phpsession 成功!
+2017-07-10 16:29:34       提示:新一天,重计止损额.止损:-100.0元,止盈:100.0元,初始:0.0元.
+2017-07-10 16:30:44       系统线程运行结束
+2017-07-10 16:38:43       刷新lt 页面的 phpsession 成功!
+2017-07-10 16:38:44       提示:新一天,重计止损额.止损:-100.0元,止盈:100.0元,初始:0.0元.
+2017-07-10 16:39:25       修改密码失败{"errorField":{"type":"oldPw","msg":"\u65e7\u5bc6\u7801\u9519\u8bef\uff0c\u8bf7\u91cd\u65b0\u8f93\u5165"},"message":"\u65e7\u5bc6\u7801\u9519\u8bef\uff0c\u8bf7\u91cd\u65b0\u8f93\u5165 (1041006)","status":"N"}
+2017-07-10 16:40:05       系统线程运行结束
+2017-07-10 16:43:06       刷新lt 页面的 phpsession 成功!
+2017-07-10 16:43:08       提示:新一天,重计止损额.止损:-100.0元,止盈:100.0元,初始:0.0元.
+2017-07-10 16:43:40       修改密码失败{"errorField":{"type":"newPw","msg":"\u65b0\u5bc6\u7801\u4e0d\u53ef\u4ee5\u8ddf\u539f\u6765\u76f8\u540c"},"message":"","status":"N"}
+2017-07-10 16:44:18       系统线程运行结束
+2017-07-10 16:44:34       刷新lt 页面的 phpsession 成功!
+2017-07-10 16:45:41       系统线程运行结束
+2017-07-10 16:51:03       错误:PHPSESSION页面返回数据错误!<!DOCTYPE HTML><html><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8" /><meta content="telephone=no" name="format-detection" /><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" /><title>Alert Msg</title><link href="/style/AlertBox.css?1499676663" rel="stylesheet" /><script src="/inte/js/Lang.js?key=charset&amp;1499676663"></script><script src="/inte/js/Lang/package.js?1499676663"></script><script src="/inte/js/AlertBox.js?1499676663"></script><script>window.onload = function () {    window.location.replace("/session_alert_router.php?code=120022&area=mem_ipl")};</script></head><body></body></html>
+2017-07-10 16:52:16       错误:PHPSESSION页面返回数据错误!<!DOCTYPE HTML><html><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8" /><meta content="telephone=no" name="format-detection" /><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" /><title>Alert Msg</title><link href="/style/AlertBox.css?1499676736" rel="stylesheet" /><script src="/inte/js/Lang.js?key=charset&amp;1499676736"></script><script src="/inte/js/Lang/package.js?1499676736"></script><script src="/inte/js/AlertBox.js?1499676736"></script><script>window.onload = function () {    window.location.replace("/session_alert_router.php?code=120022&area=mem_ipl")};</script></head><body></body></html>
+2017-07-10 16:53:27       错误:PHPSESSION页面返回数据错误!<!DOCTYPE HTML><html><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8" /><meta content="telephone=no" name="format-detection" /><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" /><title>Alert Msg</title><link href="/style/AlertBox.css?1499676807" rel="stylesheet" /><script src="/inte/js/Lang.js?key=charset&amp;1499676807"></script><script src="/inte/js/Lang/package.js?1499676807"></script><script src="/inte/js/AlertBox.js?1499676807"></script><script>window.onload = function () {    window.location.replace("/session_alert_router.php?code=120022&area=mem_ipl")};</script></head><body></body></html>
+2017-07-10 17:21:03       刷新lt 页面的 phpsession 成功!
+2017-07-10 17:21:04       提示:新一天,重计止损额.止损:-100.0元,止盈:100.0元,初始:0.0元.
+2017-07-10 17:21:30       系统线程运行结束
